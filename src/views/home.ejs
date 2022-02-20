@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/home.css" />
+  </head>
+  <body>
+    <!-- <h1>Welcome <%= userID %></h1> -->
+    <div class="container">
+      <div class="left-flexbox">
+        <div class="code-input box">
+          <form class="code-input-form">
+            <div class="chat-bubble-flex">
+              <img src="./images/speech_bubble.png" alt="" />
+              <div>Start new chat</div>
+            </div>
+            <div class="code-submit-dropdown">
+              <input class="chat-code-input" type="text" name="room" />
+              <button type="submit">submit</button>
+            </div>
+          </form>
+        </div>
+        <div class="user-info box">
+          <!-- these will be different things, including maybe the actual user ID#, for JS to grab -->
+          <div class="user-image-container">
+            <img src="" alt="" class="" />
+          </div>
+          <div class="user-details">
+            <div class="name">
+              <strong> My Name <span><%= userID %></span> </strong>
+            </div>
+            <div class="email">Email <span><%= userID %></span></div>
+            <div class="id">UserId <span><%= userID %></span></div>
+          </div>
+        </div>
+        <div class="sideboard-right-bottom box">
+          <div class="invite">
+            <form>
+              <div class="copy-code">
+                <div class="copy-code-headline">Copy invite code</div>
+                <button class="invite-button">
+                  <img src="./images/link_white.png" alt="" />
+                </button>
+                <p>Share this code to create a new group chat</p>
+                <img src="./images/paper_airplane.png" alt="" />
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- <div class="logo-image box">
+          <div>Worm-chat</div>
+        </div> -->
+      </div>
+
+      <div class="center-flexbox box">
+        <div class="chat-window">
+          <!-- populates based on conversation selected -->
+        </div>
+
+        <form class="chat-input">
+          <input type="text" name="text" class="message-input" />
+          <button type="submit" class="message-submit-button">Send</button>
+        </form>
+      </div>
+      <div class="right-flexbox">
+        <div class="contact-info box">
+          <!-- these will be dirrent things, including maybe the actual user ID#, for JS to grab -->
+          <div class="contact-image-container">
+            <img src="" alt="" class="" />
+          </div>
+          <div class="contact-details">
+            <div class="name">Contact Name: <span><%= userID %></span></div>
+            <div class="email">Contact Email: <span><%= userID %></span></div>
+          </div>
+        </div>
+        <div class="active-chats">
+          <div>Contacts</div>
+          <!-- unique to user -->
+          <% userMessagesData.forEach(chatroom => { for (let i = 0; i <
+          chatroom.length - 1; i++) { %>
+          <span class="contact"><%=chatroom[i] %></span>
+          <% } %>
+          <div class="hidden-roomId" id=" <%= chatroom[chatroom.length-1] %> ">
+            roomID
+          </div>
+          <%}) %>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.3/qs.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/home.js"></script>
+  </body>
+</html>

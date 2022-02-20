@@ -1,0 +1,33 @@
+{
+  "name": "full-stack-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "db:create": "createdb chat_app_database",
+    "db:destroy": "dropdb chat_app_database",
+    "db:init": "psql -U postgres -d chat_app_database -a -f init.sql",
+    "db:seed": "psql -f seed.sql chat_app_database",
+    "db:reset": "npm run db:destroy; npm run db:create && npm run db:init && npm run db:seed",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "moment": "^2.29.1",
+    "mongoose": "^6.2.2",
+    "node-fetch": "^2.6.7",
+    "pg-promise": "^10.11.1",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
