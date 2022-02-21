@@ -16,8 +16,8 @@
 const express = require("express"),
   app = express(),
   router = express.Router(),
-  pgPromise = require("pg-promise")();
-//   buildUserMessagesObject = require("../../modules/userMessages.js"),
+  pgPromise = require("pg-promise")(),
+  buildUserMessagesObject = require("../../modules/userMessages.js");
 //   mongoose = require("mongoose"),
 //   User = require("../../models/users");
 
@@ -28,7 +28,7 @@ const express = require("express"),
 const config = {
   host: "localhost",
   port: 5432,
-  database: "mv_todo_app",
+  database: "chatApp",
   user: "matthewvolny",
   password: "Ronweasley1@@@",
 };
@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
 
     res.render("home", { userID: userID, userMessagesData: userMessagesData });
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 
@@ -122,17 +122,16 @@ router.post("/login", async (req, res) => {
 //create user
 router.post("/signup", async (req, res) => {
   const username = req.body.username,
-    password = req.params.username,
-    email = req.params.username,
-    src = req.params.src;
-  console.log(username);
-  console.log(password);
-  console.log(email);
-  console.log(src);
+    password = req.body.password,
+    email = req.body.email,
+    src = req.body.src;
+  console.log(src); //coming up null
   try {
-    let queryString = "INSERT INTO tasks (task) VALUES ($1)";
-    await database.none(queryString, [req.body.task]);
-    res.redirect("/");
+    let queryString =
+      "INSERT INTO users (username, user_password, email, src) VALUES ($1, $2, $3, $4)";
+    await database.none(queryString, [username, password, email, src]);
+    //could redirect to another page for a moment (confirming registration, then redirect to /login)
+    res.redirect("/login");
   } catch (error) {
     console.log(error);
   }

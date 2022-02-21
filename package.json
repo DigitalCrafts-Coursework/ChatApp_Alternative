@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "db:create": "createdb mv_todo_app",
-    "db:destroy": "dropdb mv_todo_app",
-    "db:init": "psql -f commands.sql mv_todo_app",
+    "db:create": "createdb chatApp",
+    "db:destroy": "dropdb chatApp",
+    "db:init": "psql -f commands.sql chatApp",
     "db:seed": "psql -f seed.sql likeypixdb",
     "db:reset": "npm run db:destroy; npm run db:create && npm run db:init",
     "test": "echo \"Error: no test specified\" && exit 1"
