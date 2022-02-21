@@ -36,18 +36,19 @@ const config = {
 const database = pgPromise(config);
 
 //render dashboard (homepage) using user specific data
-let userID = "";
+let loggedInUser = "";
 router.get("/", async (req, res) => {
+  console.log(`line 42, userID: ${loggedInUser[0].username}`);
   try {
-    console.log(`line 42, userID: ${userID}`);
-    //!4query database for the user id( return object with all info about the user (i.e. {id, username, email}, to render the home page)
     //!should be called something like "userInfo" rather than userID
     //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
-    userMessagesData = buildUserMessagesObject(userID);
+    // userMessagesData = buildUserMessagesObject(userID);
 
     // const results = await db.any("SELECT * FROM rooms ORDER BY roomName");
 
-    res.render("home", { userID: userID, userMessagesData: userMessagesData });
+    res.render("home", {
+      loggedInUser: loggedInUser /*, userMessagesData: userMessagesData*/,
+    });
   } catch (error) {
     console.log(error);
   }
@@ -80,12 +81,6 @@ router.get("/signup", async (req, res) => {
   }
 });
 
-//check username and password (hard coded for now, this will happen with a database query below)
-// const usernameA = "Matthew";
-// const passwordA = 1234;
-// const usernameB = "John";
-// const passwordB = 1234;
-
 //checks db for username and password and redirects to the home page
 router.post("/login", async (req, res) => {
   const username = req.body.username,
@@ -99,9 +94,7 @@ router.post("/login", async (req, res) => {
       console.log(loginAttempt[0].username);
       console.log(loginAttempt[0].user_password);
       console.log(loginAttempt[0].email);
-      //!2.want a unique user id assigned here (i.e. should be an actual userId, not username)
-      userID = loginAttempt[0].id;
-      userDetails = loginAttempt;
+      loggedInUser = await loginAttempt;
       res.redirect("/");
     }
   } catch (error) {

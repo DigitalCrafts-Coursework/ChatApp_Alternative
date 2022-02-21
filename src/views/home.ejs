@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="./css/home.css" />
   </head>
   <body>
-    <!-- <h1>Welcome <%= userID %></h1> -->
     <div class="container">
       <div class="left-flexbox">
         <div class="code-input box">
@@ -30,10 +29,16 @@
           </div>
           <div class="user-details">
             <div class="name">
-              <strong> My Name <span><%= userID %></span> </strong>
+              <strong>
+                My Name <span><%= loggedInUser[0].username %></span>
+              </strong>
             </div>
-            <div class="email">Email <span><%= userID %></span></div>
-            <div class="id">UserId <span><%= userID %></span></div>
+            <div class="email">
+              Email <span><%= loggedInUser[0].user_password %></span>
+            </div>
+            <div class="id">
+              UserId <span><%= loggedInUser[0].email %></span>
+            </div>
           </div>
         </div>
         <div class="sideboard-right-bottom box">
@@ -72,8 +77,12 @@
             <img src="" alt="" class="" />
           </div>
           <div class="contact-details">
-            <div class="name">Contact Name: <span><%= userID %></span></div>
-            <div class="email">Contact Email: <span><%= userID %></span></div>
+            <div class="name">
+              Contact Name: <span><%= loggedInUser[0].username %></span>
+            </div>
+            <div class="email">
+              Contact Email: <span><%= loggedInUser[0].username %></span>
+            </div>
           </div>
         </div>
         <div class="active-chats">
