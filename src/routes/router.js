@@ -40,6 +40,34 @@ let loggedInUser = "";
 router.get("/", async (req, res) => {
   console.log(`line 42, userID: ${loggedInUser[0].username}`);
   try {
+    const myRooms = await database.any(
+      `SELECT * FROM rooms WHERE id = '${loggedInUser[0].id}'`
+    );
+
+    console.log(`my rooms are ${myRooms[0].room_id}`);
+    console.log(`my rooms are ${myRooms[1].room_id}`);
+    console.log(`my rooms are ${myRooms[2].room_id}`);
+    console.log(`my rooms are ${myRooms[3].room_id}`);
+
+    const sharedRooms = [];
+    console.log(`line 53: ${loggedInUser[0].id}`); // 1
+    for (let i = 0; i < myRooms.length; i++) {
+      const sharedRoom = await database.any(
+        `SELECT * FROM rooms WHERE room_id = '${myRooms[i].room_id}' AND id != '${loggedInUser[0].id}'`
+      );
+      sharedRooms.push(sharedRoom);
+      console.log("one loop");
+    }
+
+    for (let i = 0; i < sharedRooms.length; i++) {
+      console.log(`${sharedRooms[i].id} and ${sharedRooms[i].room_id}`);
+    }
+
+    const str = JSON.stringify(sharedRooms);
+    console.log(str);
+    console.log(`these are users sharing a room with me ${sharedRooms}`);
+    console.log(`these are users sharing a room with me ${sharedRooms[0]}`);
+    console.log(`these are users sharing a room with me ${sharedRooms[0].id}`);
     //!should be called something like "userInfo" rather than userID
     //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
     userMessagesData = buildUserMessagesObject(loggedInUser[0].id);

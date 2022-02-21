@@ -37,7 +37,7 @@ pastedCodeButton.addEventListener("click", (e) => {
   console.log(`line 32: ${pastedRoomId}`);
   //join room (w/username)
   socket.emit("storeRoom", { userId, pastedRoomId });
-  // socket.emit("joinRoom", { username, userId, pastedRoomID, roomChange });
+  //!socket.emit("joinRoom", { username, userId, pastedRoomID, roomChange });
   //clear the chat input box, and focus on the box after button click
   inputBox.value = "";
   inputBox.focus();
