@@ -60,14 +60,15 @@ router.get("/", async (req, res) => {
       //
       sharedRooms.forEach(async (sharedRoom) => {
         const correspondingContactInfo = await database.any(
-          `SELECT * FROM users INNER JOIN rooms ON id = '${sharedRoom[0].id}' AND room_id = '${sharedRoom[0].room_id}'`
+          `SELECT * FROM users INNER JOIN rooms ON rooms.id = '${sharedRoom[0].id}' AND room_id = '${sharedRoom[0].room_id}'`
           // `SELECT * FROM <JOINEDROOMS> WHERE id = '${sharedRoom[0].id}' AND room_id = '${sharedRoom[0].id}'`
         );
 
-        console.log(`sharedRoom user info ${correspondingContactInfo}`);
-        const toJSON = JSON.stringify(correspondingContactInfo);
-        console.log(toJSON);
+        // console.log(`sharedRoom user info ${correspondingContactInfo}`);
       });
+
+      const toJSON = JSON.stringify(correspondingContactInfo);
+      console.log(toJSON);
 
       // for (let i = 0; i < sharedRooms.length; i++) {
       //   `SELECT * FROM <JOINED ROOMS> WHERE room_id = '${myRooms[i].room_id}' AND id != '${loggedInUser[0].id}'`;
