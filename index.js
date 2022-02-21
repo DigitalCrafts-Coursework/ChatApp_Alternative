@@ -15,6 +15,7 @@ const formatMessage = require("./modules/formatMessage");
 const userJoinObject = require("./modules/manageUsers");
 const router = require("./src/routes/router");
 const fetch = require("node-fetch");
+const axios = require("axios");
 
 const chatBot = "Chatbot";
 
@@ -22,9 +23,32 @@ const chatBot = "Chatbot";
 io.on("connection", (socket) => {
   console.log(`connected (server-side) with socketId ${socket.id}`);
   //get invite code when clicked (also sets up a new room)
-  socket.on("get-invite-code", (username) => {
+  socket.on("get-invite-code", (userId) => {
     const inviteCode = uuidV4();
     console.log(inviteCode);
+    axios
+      .post("http://localhost:3000/invite", {
+        userId: userId,
+        inviteCode: inviteCode,
+      })
+      .then((res) => {
+        console.log(`statusCode: ${res.status}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    // async () => {
+    //   try {
+    //     const res = await fetch("http://localhost:3000/invite", {
+    //       method: "POST",
+    //       body: `{userId: ${userId}, inviteCode: ${inviteCode}}`,
+    //     });
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
     //!add this invite code (roomID) to the user's own (i.e. add roomID to username being passed = will need to pass an id (not a username))
   });
 

@@ -10,9 +10,15 @@ chatBubbleFlex.addEventListener("click", (e) => {
 });
 
 //userID obtained from rendered dashboard home page
-//! const userID = document.querySelector(".id");
-const username = document.querySelector(".name > span").innerHTML;
-console.log(username);
+const userId = document.querySelector(".users-name").id;
+console.log(userId);
+
+//generate a random invite roomId
+const inviteButton = document.querySelector(".invite-button");
+inviteButton.addEventListener("click", () => {
+  console.log(userId);
+  socket.emit("get-invite-code", userId);
+});
 
 //input box for pasting a roomID shared with you
 const newChat = document.querySelector(".chat-code-input");
@@ -47,13 +53,6 @@ messageSubmitButton.addEventListener("click", (e) => {
   //clear the chat input box, and focus on the box after button click
   messageInput.value = "";
   messageInput.focus();
-});
-
-//generate a random invite room Id to email to someone (would be best to set this up to actually email someone)
-const inviteButton = document.querySelector(".invite-button");
-inviteButton.addEventListener("click", () => {
-  //!send userID here (go to top of page - requires database query at login) rather than username(as seen below)
-  socket.emit("get-invite-code", username);
 });
 
 //on receiving a formatted message, calls function to output message to the browser chat window

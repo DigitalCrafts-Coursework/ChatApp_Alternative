@@ -8,7 +8,7 @@ CREATE TABLE users (
 
 CREATE TABLE rooms (
         id int references users(id),
-        room int not null 
+        room_id text not null 
 );
 
 CREATE TABLE messages (

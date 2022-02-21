@@ -30,7 +30,10 @@
           <div class="user-details">
             <div class="name">
               <strong>
-                My Name <span><%= loggedInUser[0].username %></span>
+                My Name
+                <span class="users-name" id=" <%= loggedInUser[0].id %>"
+                  ><%= loggedInUser[0].username %></span
+                >
               </strong>
             </div>
             <div class="email">

@@ -42,12 +42,13 @@ router.get("/", async (req, res) => {
   try {
     //!should be called something like "userInfo" rather than userID
     //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
-    // userMessagesData = buildUserMessagesObject(userID);
+    userMessagesData = buildUserMessagesObject(loggedInUser[0].id);
 
     // const results = await db.any("SELECT * FROM rooms ORDER BY roomName");
 
     res.render("home", {
-      loggedInUser: loggedInUser /*, userMessagesData: userMessagesData*/,
+      loggedInUser: loggedInUser,
+      userMessagesData: userMessagesData,
     });
   } catch (error) {
     console.log(error);
@@ -94,7 +95,7 @@ router.post("/login", async (req, res) => {
       console.log(loginAttempt[0].username);
       console.log(loginAttempt[0].user_password);
       console.log(loginAttempt[0].email);
-      loggedInUser = await loginAttempt;
+      loggedInUser = loginAttempt;
       res.redirect("/");
     }
   } catch (error) {
@@ -115,6 +116,22 @@ router.post("/signup", async (req, res) => {
     await database.none(queryString, [username, password, email, src]);
     //could redirect to another page for a moment (confirming registration, then redirect to /login)
     res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//add invite roomId code to the database
+router.post("/invite", async (req, res) => {
+  const userId = req.body.userId,
+    inviteCode = req.body.inviteCode;
+  console.log(`line 130 ${req.body.userId}`);
+  console.log(`line 132 ${req.body.inviteCode}`);
+  try {
+    let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
+    await database.none(queryString, [userId, inviteCode]);
+    //could redirect to another page for a moment (confirming registration, then redirect to /login)
+    //res.redirect("/");
   } catch (error) {
     console.log(error);
   }
