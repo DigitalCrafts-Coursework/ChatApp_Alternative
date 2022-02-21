@@ -11,7 +11,9 @@ chatBubbleFlex.addEventListener("click", (e) => {
 
 //userID obtained from rendered dashboard home page
 const userId = document.querySelector(".users-name").id;
+const username = document.querySelector(".users-name").innerHTML;
 console.log(userId);
+console.log(username);
 
 //generate a random invite roomId
 const inviteButton = document.querySelector(".invite-button");
@@ -20,24 +22,26 @@ inviteButton.addEventListener("click", () => {
   socket.emit("get-invite-code", userId);
 });
 
-//input box for pasting a roomID shared with you
-const newChat = document.querySelector(".chat-code-input");
-newChat.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const inputBox = document.querySelector(".chat-code-input > input");
-  const roomID = inputBox.value;
-  console.log(`line 32: ${roomID}`);
-  //join room (w/username)
-  socket.emit("joinRoom", { username, roomID });
-  //clear the chat input box, and focus on the box after button click
-  inputBox.value = "";
-  inputBox.focus();
-});
-
 let currentRoom = "";
 let roomChange = "";
 let userSocketId = "";
 let userInfoForReset = "";
+
+//input box for pasting a roomID shared with you
+const pastedCodeButton = document.querySelector(".pasted-code-button");
+pastedCodeButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log("clicked pasted code submit button");
+  const inputBox = document.querySelector(".pasted-code-input");
+  const pastedRoomId = inputBox.value;
+  console.log(`line 32: ${pastedRoomId}`);
+  //join room (w/username)
+  socket.emit("storeRoom", { userId, pastedRoomId });
+  // socket.emit("joinRoom", { username, userId, pastedRoomID, roomChange });
+  //clear the chat input box, and focus on the box after button click
+  inputBox.value = "";
+  inputBox.focus();
+});
 
 //input box for sending a message (to those in the the same room)
 const messageSubmitButton = document.querySelector(".message-submit-button");

@@ -38,36 +38,45 @@ io.on("connection", (socket) => {
       .catch((error) => {
         console.error(error);
       });
+  });
 
-    // async () => {
-    //   try {
-    //     const res = await fetch("http://localhost:3000/invite", {
-    //       method: "POST",
-    //       body: `{userId: ${userId}, inviteCode: ${inviteCode}}`,
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-    //!add this invite code (roomID) to the user's own (i.e. add roomID to username being passed = will need to pass an id (not a username))
+  socket.on("storeRoom", ({ userId, pastedRoomId }) => {
+    console.log(`line 47, server roomId: ${pastedRoomId}`);
+    //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
+    axios
+      .post("http://localhost:3000/pastedInvite", {
+        userId: userId,
+        pastedRoomId: pastedRoomId,
+      })
+      .then((res) => {
+        console.log(`statusCode: ${res.status}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   });
 
   //user object variable
   let user = {};
   //join room (gets triggered when url is pasted)
-  socket.on("joinRoom", ({ username, roomID, roomChange }) => {
-    console.log(`line 49, server: ${roomID}`);
+  socket.on("joinRoom", ({ username, roomId, roomChange }) => {
+    console.log(`line 47, server roomId: ${roomId}`);
     //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
-    async () => {
-      try {
-        const res = await fetch("http://localhost:3000/", {
-          method: "POST",
-          body: "",
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    axios
+      .post("http://localhost:3000/pastedInvite", {
+        username: username,
+        roomId: roomId,
+        roomChange: roomChange,
+      })
+      .then((res) => {
+        console.log(`statusCode: ${res.status}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     // makes user object (w/id, username, room), and joins the selected room
     user = userJoinObject(socket.id, username, roomID);
     //this socket joins this particular room

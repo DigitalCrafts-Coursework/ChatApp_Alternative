@@ -130,8 +130,22 @@ router.post("/invite", async (req, res) => {
   try {
     let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
     await database.none(queryString, [userId, inviteCode]);
-    //could redirect to another page for a moment (confirming registration, then redirect to /login)
-    //res.redirect("/");
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//add invite roomId code to the database
+router.post("/pastedInvite", async (req, res) => {
+  const userId = req.body.userId,
+    pastedRoomId = req.body.pastedRoomId;
+  console.log(`line 130 ${userId}`);
+  console.log(`line 132 ${pastedRoomId}`);
+  try {
+    let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
+    await database.none(queryString, [userId, pastedRoomId]);
+    // res.redirect("/");
   } catch (error) {
     console.log(error);
   }
