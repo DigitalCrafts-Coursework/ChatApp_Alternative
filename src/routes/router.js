@@ -1,13 +1,39 @@
+// const { MongoClient, ServerApiVersion } = require("mongodb");
+// const uri =
+//   "mongodb+srv://mvolny:47Bt988@chatappcluster.ia7qa.mongodb.net/chat_app_db?retryWrites=true&w=majority";
+// const client = new MongoClient(uri, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   serverApi: ServerApiVersion.v1,
+// });
+// client.connect((err) => {
+//   const collection = client.db("test").collection("devices");
+//   // perform actions on the collection object
+//   console.log("connected");
+//   client.close();
+// });
+
 const express = require("express"),
   app = express(),
   router = express.Router(),
-  buildUserMessagesObject = require("../../modules/userMessages.js"),
-  mongoose = require("mongoose"),
-  User = require("../../models/users");
+  pgPromise = require("pg-promise")();
+//   buildUserMessagesObject = require("../../modules/userMessages.js"),
+//   mongoose = require("mongoose"),
+//   User = require("../../models/users");
 
-mongoose.connect(
-  "mongodb+srv://mvolny:47Bt988@chatappcluster.ia7qa.mongodb.net/chat_app_db?retryWrites=true&w=majority"
-);
+// mongoose.connect(
+//   "mongodb+srv://mvolny:47Bt988@chatappcluster.ia7qa.mongodb.net/chat_app_db?retryWrites=true&w=majority"
+// );
+
+const config = {
+  host: "localhost",
+  port: 5432,
+  database: "mv_todo_app",
+  user: "matthewvolny",
+  password: "Ronweasley1@@@",
+};
+
+const database = pgPromise(config);
 
 //render dashboard (homepage) using user specific data
 let userID = "";
@@ -27,7 +53,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-//CREATE ROOM
 router.post("/", async (req, res, next) => {
   try {
     res.redirect("/");
@@ -94,35 +119,25 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//DELETE ROOM
-router.post("/:roomName", async (req, res, next) => {
+//create user
+router.post("/signup", async (req, res) => {
+  const username = req.body.username,
+    password = req.params.username,
+    email = req.params.username,
+    src = req.params.src;
+  console.log(username);
+  console.log(password);
+  console.log(email);
+  console.log(src);
   try {
-    const { roomName } = req.params;
-    const results = await db.none(
-      "DELETE FROM rooms WHERE roomName=($1)",
-      roomName
-    );
-    res.send(`Chatroom ${roomName} was deleted`);
+    let queryString = "INSERT INTO tasks (task) VALUES ($1)";
+    await database.none(queryString, [req.body.task]);
+    res.redirect("/");
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 
-//NOT COMPLETE OLD CODE
-app.post("/user", (req, res) => {
-  const { userID, userName } = req.body;
-  db.none("INSERT INTO users (userID, userName) VALUES ($1, $2)", [
-    userID,
-    userName,
-  ]).then(() => {
-    console.log(`User ${userName} was created`);
-    res.send("User created");
-  });
-});
-
-//ERROR HANDLING
-app.use((err, req, res, next) => {
-  res.send("something went wrong");
-});
+//await models.Task.create({ task: req.body.task });
 
 module.exports = router;

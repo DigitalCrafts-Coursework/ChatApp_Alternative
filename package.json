@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "db:create": "createdb chat_app_database",
-    "db:destroy": "dropdb chat_app_database",
-    "db:init": "psql -U postgres -d chat_app_database -a -f init.sql",
-    "db:seed": "psql -f seed.sql chat_app_database",
-    "db:reset": "npm run db:destroy; npm run db:create && npm run db:init && npm run db:seed",
+    "db:create": "createdb mv_todo_app",
+    "db:destroy": "dropdb mv_todo_app",
+    "db:init": "psql -f commands.sql mv_todo_app",
+    "db:seed": "psql -f seed.sql likeypixdb",
+    "db:reset": "npm run db:destroy; npm run db:create && npm run db:init",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
