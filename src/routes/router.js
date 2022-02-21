@@ -39,7 +39,7 @@ const database = pgPromise(config);
 let userID = "";
 router.get("/", async (req, res) => {
   try {
-    console.log(userID);
+    console.log(`line 42, userID: ${userID}`);
     //!4query database for the user id( return object with all info about the user (i.e. {id, username, email}, to render the home page)
     //!should be called something like "userInfo" rather than userID
     //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
@@ -81,50 +81,27 @@ router.get("/signup", async (req, res) => {
 });
 
 //check username and password (hard coded for now, this will happen with a database query below)
-const usernameA = "Matthew";
-const passwordA = 1234;
-const usernameB = "John";
-const passwordB = 1234;
+// const usernameA = "Matthew";
+// const passwordA = 1234;
+// const usernameB = "John";
+// const passwordB = 1234;
 
-//checks username and password against the database and brings user to unique dashboard home page
-// let userMessagesData = [];
+//checks db for username and password and redirects to the home page
 router.post("/login", async (req, res) => {
   const username = req.body.username,
     password = req.body.password;
-  console.log(username);
-  console.log(password);
   try {
     const loginAttempt = await database.any(
-      `SELECT * FROM users WHERE username = "${username}" AND password = "${password}"`
+      `SELECT * FROM users WHERE username = '${username}' AND user_password = '${password}'`
     );
-    console.log(loginAttempt);
-    res.render("home", {
-      toDoTasks: toDoTasks,
-      completedTasks: completedTasks,
-    });
-
-    //!1.database query => if username and password are found (go to unique dashboard(home page) - send over username)
-    const username = req.body.username;
-    const password = req.body.password;
-    console.log(username);
-    console.log(password);
-    if (
-      (username == usernameA || username == usernameB) &&
-      (password == passwordA || password == passwordB)
-    ) {
+    if (loginAttempt) {
+      console.log(loginAttempt[0].id);
+      console.log(loginAttempt[0].username);
+      console.log(loginAttempt[0].user_password);
+      console.log(loginAttempt[0].email);
       //!2.want a unique user id assigned here (i.e. should be an actual userId, not username)
-      userID = username;
-      //!3a.function which queries database to find all rooms which user is a member, and all other users with these rooms
-
-      //        //post to database
-      //     console.log(req.body);
-      //     const { roomName, userID, created = "now()" } = req.body;
-      //     const results = await db.none(
-      //       "INSERT INTO rooms (userID, created,roomName) VALUES ($1, $2, $3)",
-      //       [userID, created, roomName]
-      //     );
-      //     res.send(`Chatroom ${roomName} was created`);
-
+      userID = loginAttempt[0].id;
+      userDetails = loginAttempt;
       res.redirect("/");
     }
   } catch (error) {
