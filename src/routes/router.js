@@ -89,7 +89,20 @@ const passwordB = 1234;
 //checks username and password against the database and brings user to unique dashboard home page
 // let userMessagesData = [];
 router.post("/login", async (req, res) => {
+  const username = req.body.username,
+    password = req.body.password;
+  console.log(username);
+  console.log(password);
   try {
+    const loginAttempt = await database.any(
+      `SELECT * FROM users WHERE username = "${username}" AND password = "${password}"`
+    );
+    console.log(loginAttempt);
+    res.render("home", {
+      toDoTasks: toDoTasks,
+      completedTasks: completedTasks,
+    });
+
     //!1.database query => if username and password are found (go to unique dashboard(home page) - send over username)
     const username = req.body.username;
     const password = req.body.password;
