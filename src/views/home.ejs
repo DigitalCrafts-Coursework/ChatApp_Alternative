@@ -37,10 +37,7 @@
               </strong>
             </div>
             <div class="email">
-              Email <span><%= loggedInUser[0].user_password %></span>
-            </div>
-            <div class="id">
-              UserId <span><%= loggedInUser[0].email %></span>
+              Email <span><%= loggedInUser[0].email %></span>
             </div>
           </div>
         </div>
@@ -91,12 +88,9 @@
         <div class="active-chats">
           <div>Contacts</div>
           <!-- unique to user -->
-          <% userMessagesData.forEach(chatroom => { for (let i = 0; i <
-          chatroom.length - 1; i++) { %>
-          <span class="contact"><%=chatroom[i] %></span>
-          <% } %>
-          <div class="hidden-roomId" id=" <%= chatroom[chatroom.length-1] %> ">
-            roomID
+          <% contacts.forEach(contact => { %>
+          <div class="hidden-roomId" id=" <%= contact[0].room_id %> ">
+            <%= contact[0].id %>
           </div>
           <%}) %>
         </div>

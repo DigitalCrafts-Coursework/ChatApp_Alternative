@@ -1,29 +1,8 @@
-// const { MongoClient, ServerApiVersion } = require("mongodb");
-// const uri =
-//   "mongodb+srv://mvolny:47Bt988@chatappcluster.ia7qa.mongodb.net/chat_app_db?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   serverApi: ServerApiVersion.v1,
-// });
-// client.connect((err) => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   console.log("connected");
-//   client.close();
-// });
-
 const express = require("express"),
   app = express(),
   router = express.Router(),
-  pgPromise = require("pg-promise")(),
-  buildUserMessagesObject = require("../../modules/userMessages.js");
-//   mongoose = require("mongoose"),
-//   User = require("../../models/users");
-
-// mongoose.connect(
-//   "mongodb+srv://mvolny:47Bt988@chatappcluster.ia7qa.mongodb.net/chat_app_db?retryWrites=true&w=majority"
-// );
+  pgPromise = require("pg-promise")();
+//buildUserMessagesObject = require("../../modules/userMessages.js");
 
 const config = {
   host: "localhost",
@@ -39,50 +18,86 @@ const database = pgPromise(config);
 let loggedInUser = "";
 router.get("/", async (req, res) => {
   console.log(`line 42, userID: ${loggedInUser[0].username}`);
-  try {
-    const myRooms = await database.any(
-      `SELECT * FROM rooms WHERE id = '${loggedInUser[0].id}'`
-    );
 
-    console.log(`my rooms are ${myRooms[0].room_id}`);
-    console.log(`my rooms are ${myRooms[1].room_id}`);
-    console.log(`my rooms are ${myRooms[2].room_id}`);
-    console.log(`my rooms are ${myRooms[3].room_id}`);
+  const firstVisitCheck = await database.any(
+    `SELECT * FROM rooms WHERE id = '${loggedInUser[0].id}'`
+  );
 
-    const sharedRooms = [];
-
-    for (let i = 0; i < myRooms.length; i++) {
-      const sharedRoom = await database.any(
-        `SELECT * FROM rooms WHERE room_id = '${myRooms[i].room_id}' AND id != '${loggedInUser[0].id}'`
-      );
-      if (sharedRoom != "") {
-        sharedRooms.push(sharedRoom);
-      }
-      console.log("one loop");
+  console.log(firstVisitCheck);
+  //if statement checks for first time logging in
+  if (firstVisitCheck == "") {
+    try {
+      res.render("home", {
+        loggedInUser: loggedInUser,
+        contacts: [],
+      });
+    } catch (error) {
+      console.log(error);
     }
+  } else {
+    try {
+      const myRooms = await database.any(
+        `SELECT * FROM rooms WHERE id = '${loggedInUser[0].id}'`
+      );
+      console.log(`my rooms are ${myRooms[0].room_id}`);
+      console.log(`my rooms are ${myRooms[1].room_id}`);
+      console.log(`my rooms are ${myRooms[2].room_id}`);
 
-    // for (let i = 0; i < sharedRooms.length; i++) {
-    //   console.log(`${sharedRooms[i].id} and ${sharedRooms[i].room_id}`);
-    // }
+      const sharedRooms = [];
 
-    const str = JSON.stringify(sharedRooms);
-    console.log(str);
-    // console.log(`these are users sharing a room with me ${sharedRooms}`);
-    // console.log(`these are users sharing a room with me ${sharedRooms[0]}`);
-    // console.log(`these are users sharing a room with me ${sharedRooms[0].id}`);
+      for (let i = 0; i < myRooms.length; i++) {
+        const sharedRoom = await database.any(
+          `SELECT * FROM rooms WHERE room_id = '${myRooms[i].room_id}' AND id != '${loggedInUser[0].id}'`
+        );
+        if (sharedRoom != "") {
+          sharedRooms.push(sharedRoom);
+        }
+      }
 
-    //!should be called something like "userInfo" rather than userID
-    //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
-    userMessagesData = buildUserMessagesObject(loggedInUser[0].id);
+      const str = JSON.stringify(sharedRooms);
+      console.log(str);
 
-    // const results = await db.any("SELECT * FROM rooms ORDER BY roomName");
+      //
+      sharedRooms.forEach(async (sharedRoom) => {
+        const correspondingContactInfo = await database.any(
+          `SELECT * FROM users INNER JOIN rooms ON id = '${sharedRoom[0].id}' AND room_id = '${sharedRoom[0].room_id}'`
+          // `SELECT * FROM <JOINEDROOMS> WHERE id = '${sharedRoom[0].id}' AND room_id = '${sharedRoom[0].id}'`
+        );
 
-    res.render("home", {
-      loggedInUser: loggedInUser,
-      userMessagesData: userMessagesData,
-    });
-  } catch (error) {
-    console.log(error);
+        console.log(`sharedRoom user info ${correspondingContactInfo}`);
+        const toJSON = JSON.stringify(correspondingContactInfo);
+        console.log(toJSON);
+      });
+
+      // for (let i = 0; i < sharedRooms.length; i++) {
+      //   `SELECT * FROM <JOINED ROOMS> WHERE room_id = '${myRooms[i].room_id}' AND id != '${loggedInUser[0].id}'`;
+      // }
+      // const ContactInfo = await database.any(
+      //   `SELECT * FROM users NATURAL JOIN rooms`
+      // );
+
+      //
+
+      // console.log(`line 66 ${sharedRooms[0].id}`);
+      // sharedRooms.forEach(async (sharedRoom) => {
+      //   const correspondingContactInfo = await database.any(
+      //     `SELECT * FROM users WHERE id = '${sharedRoom[0].id}'`
+      //   );
+      //   console.log(`sharedRoom user info ${correspondingContactInfo}`);
+      //   const toJSON = JSON.stringify(correspondingContactInfo);
+      //   console.log(toJSON);
+      // });
+
+      //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
+      //userMessagesData = buildUserMessagesObject(loggedInUser[0].id);
+
+      res.render("home", {
+        loggedInUser: loggedInUser,
+        contacts: sharedRooms,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 });
 
