@@ -103,27 +103,29 @@ socket.on("userSocketId", (user) => {
 });
 
 //event listener for chat groups sidebar, joins specific room on button click (also sets current room to determine what is shown in the DOM)
-const chat = document.querySelectorAll(".hidden-roomId");
-chat.forEach((chat) => {
-  chat.addEventListener("click", (event) => {
-    const roomID = event.target.id;
+const contacts = document.querySelectorAll(".hidden-roomId");
+contacts.forEach((contact) => {
+  contact.addEventListener("click", (event) => {
+    const roomId = event.target.id;
+    const contactName = event.target.innerHTML;
+    console.log(contactName);
     //sets the clicked room (chatroom) to the current room (records whether there was a room change)
-    if (roomID === currentRoom) {
-      currentRoom = roomID;
+    if (roomId === currentRoom) {
+      currentRoom = roomId;
       roomChange = "false";
       console.log(`room changed to ${roomChange}`);
-      socket.emit("joinRoom", { username, roomID, roomChange });
+      socket.emit("joinRoom", { username, roomId, roomChange, contactName });
     } else {
       //!disconnect socket for that room, passing user info to re-connect to new room
 
       // socket.emit("disconnectSocket", userInfoForReset);
       if (currentRoom == "") {
-        currentRoom = roomID;
+        currentRoom = roomId;
         roomChange = "true";
         console.log(`room changed to ${roomChange}`);
-        socket.emit("joinRoom", { username, roomID, roomChange });
+        socket.emit("joinRoom", { username, roomId, roomChange, contactName });
       } else {
-        currentRoom = roomID;
+        currentRoom = roomId;
         roomChange = "true";
         console.log(
           `selected a new room section, client line 106 ${userInfoForReset.id}`
@@ -138,8 +140,8 @@ chat.forEach((chat) => {
         // socket.on("connect", () => {
         //   console.log("socket reconnected");
         // });
-        console.log(`username ${username}, roomID ${roomID}, ${roomChange}`);
-        socket.emit("joinRoom", { username, roomID, roomChange });
+        console.log(`username ${username}, roomID ${roomId}, ${roomChange}`);
+        socket.emit("joinRoom", { username, roomId, roomChange });
       }
     }
   });

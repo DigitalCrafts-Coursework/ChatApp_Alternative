@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
   //user object variable
   let user = {};
   //join room (gets triggered when url is pasted)
-  socket.on("joinRoom", ({ username, roomId, roomChange }) => {
+  socket.on("joinRoom", ({ username, roomId, roomChange, contactName }) => {
     console.log(`line 47, server roomId: ${roomId}`);
     //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
     axios
@@ -78,15 +78,15 @@ io.on("connection", (socket) => {
       });
 
     // makes user object (w/id, username, room), and joins the selected room
-    user = userJoinObject(socket.id, username, roomID);
+    user = userJoinObject(socket.id, username, roomId);
     //this socket joins this particular room
 
     console.log(`line 63`);
     console.log(user);
-    console.log(user.roomID);
+    console.log(user.roomId);
     console.log(user.id);
     // console.log(socket.rooms);
-    socket.join(user.roomID);
+    socket.join(user.roomId);
     console.log(socket.rooms); //confirms that socket is in the room
 
     //send user socket.id info to client (to disconnect from a socket when changing rooms)
@@ -96,7 +96,7 @@ io.on("connection", (socket) => {
       "message",
       formatMessage(
         chatBot,
-        `Hi ${user.username}, welcome! You've entered a chat with ...`
+        `Hi ${user.username}, welcome! You've entered a chat with ${contactName}`
       ),
       user.roomID,
       roomChange

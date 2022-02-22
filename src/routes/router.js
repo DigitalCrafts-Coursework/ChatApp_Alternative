@@ -39,27 +39,21 @@ router.get("/", async (req, res) => {
       const combinedTables = await database.any(
         `SELECT * FROM users NATURAL JOIN rooms`
       );
-      console.log(combinedTables);
 
-      //1 would be my loggedInUser[0].id
       let myRooms = [];
       for (let i = 0; i < combinedTables.length; i++) {
         if (combinedTables[i].id === loggedInUser[0].id) {
           myRooms.push(combinedTables[i].room_id);
         }
       }
-      console.log(myRooms);
 
-      //
       let otherUsersRooms = [];
       for (let i = 0; i < combinedTables.length; i++) {
         if (combinedTables[i].id !== loggedInUser[0].id) {
           otherUsersRooms.push(combinedTables[i].room_id);
         }
       }
-      console.log(otherUsersRooms);
 
-      //
       let sharedRooms = [];
       for (let i = 0; i < otherUsersRooms.length; i++) {
         for (let j = 0; j < myRooms.length; j++) {
@@ -68,9 +62,7 @@ router.get("/", async (req, res) => {
           }
         }
       }
-      console.log(sharedRooms);
 
-      //
       let contactInfo = [];
       for (let i = 0; i < combinedTables.length; i++) {
         for (let j = 0; j < sharedRooms.length; j++) {
@@ -87,28 +79,6 @@ router.get("/", async (req, res) => {
       res.render("home", {
         loggedInUser: loggedInUser,
         contactInfo: contactInfo,
-
-        // for (let i = 0; i < sharedRooms.length; i++) {
-        //   `SELECT * FROM <JOINED ROOMS> WHERE room_id = '${myRooms[i].room_id}' AND id != '${loggedInUser[0].id}'`;
-        // }
-        // const ContactInfo = await database.any(
-        //   `SELECT * FROM users NATURAL JOIN rooms`
-        // );
-
-        //
-
-        // console.log(`line 66 ${sharedRooms[0].id}`);
-        // sharedRooms.forEach(async (sharedRoom) => {
-        //   const correspondingContactInfo = await database.any(
-        //     `SELECT * FROM users WHERE id = '${sharedRoom[0].id}'`
-        //   );
-        //   console.log(`sharedRoom user info ${correspondingContactInfo}`);
-        //   const toJSON = JSON.stringify(correspondingContactInfo);
-        //   console.log(toJSON);
-        // });
-
-        //!5a.function which queries database to find all rooms which user is a member, and all other users with these rooms
-        //userMessagesData = buildUserMessagesObject(loggedInUser[0].id);
       });
     } catch (error) {
       console.log(error);
