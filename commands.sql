@@ -14,5 +14,5 @@ CREATE TABLE rooms (
 CREATE TABLE messages (
     id int references users(id),
     message_content text not null CHECK (message_content <> ''),
-    post_date timestamp not null
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

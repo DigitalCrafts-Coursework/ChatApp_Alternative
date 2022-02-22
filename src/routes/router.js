@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
     try {
       res.render("home", {
         loggedInUser: loggedInUser,
-        contacts: [],
+        contactInfo: [],
       });
     } catch (error) {
       console.log(error);
@@ -113,17 +113,8 @@ router.get("/login", async (req, res) => {
 });
 
 router.get("/signup", async (req, res) => {
-  const username = req.body.username,
-    password = req.body.password,
-    email = req.body.email,
-    src = req.body.src;
-  console.log(src); //coming up null
   try {
-    let queryString =
-      "INSERT INTO users (username, user_password, email, src) VALUES ($1, $2, $3, $4)";
-    await database.none(queryString, [username, password, email, src]);
-    //could redirect to another page for a moment (confirming registration, then redirect to /login)
-    res.redirect("/login");
+    res.render("signup");
   } catch (error) {
     console.log(error);
   }
