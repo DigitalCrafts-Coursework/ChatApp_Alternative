@@ -89,14 +89,15 @@ router.get("/", async (req, res) => {
 router.post("/storeMessage", async (req, res) => {
   const id = req.body.id,
     msg = req.body.msg,
-    post_date = req.body.post_date;
+    postDate = req.body.post_date,
+    roomId = req.body.room_Id;
   console.log(`id: ${id}`);
   console.log(`msg: ${msg}`);
-  console.log(`post_date: ${post_date}`);
+  // console.log(`post_date: ${post_date}`);
   try {
     let queryString =
-      "INSERT INTO messages (id, message_content, post_date) VALUES ($1, $2, $3)";
-    await database.none(queryString, [id, msg, post_date]);
+      "INSERT INTO messages (id, message_content, room_id) VALUES ($1, $2, $3)";
+    await database.none(queryString, [id, msg, roomId]);
     //could redirect to another page for a moment (confirming registration, then redirect to /login)
   } catch (error) {
     console.log(error);
@@ -189,6 +190,22 @@ router.post("/pastedInvite", async (req, res) => {
   }
 });
 
-//await models.Task.create({ task: req.body.task });
+//
+//
+//
+//
+
+router.post("/checkMessageHistory", async (req, res) => {
+  const username = req.body.username,
+    roomId = req.body.roomId,
+    userId = req.body.userId;
+  try {
+    const messageHistory = await database.any(
+      `SELECT * FROM messages WHERE id = '${userId}'`
+    );
+  } catch (error) {
+    console.log(`no history found, ${error}`);
+  }
+});
 
 module.exports = router;

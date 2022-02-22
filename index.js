@@ -80,58 +80,83 @@ io.on("connection", (socket) => {
   //user object variable
   let user = {};
   //join room (gets triggered when url is pasted)
-  socket.on("joinRoom", ({ username, roomId, roomChange, contactName }) => {
-    console.log(`line 47, server roomId: ${roomId}`);
-    //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
-    axios
-      .post("http://localhost:3000/pastedInvite", {
-        username: username,
-        roomId: roomId,
-        roomChange: roomChange,
-      })
-      .then((res) => {
-        console.log(`statusCode: ${res.status}`);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  socket.on(
+    "joinRoom",
+    ({ username, roomId, roomChange, contactName, userId }) => {
+      //
+      //
+      //check whether there is message history
+      axios
+        .post("http://localhost:3000/checkMessageHistory", {
+          username: username,
+          roomId: roomId,
+          userId: userId,
+        })
+        .then((res) => {
+          console.log(`statusCode: ${res.status}`);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
 
-    // makes user object (w/id, username, room), and joins the selected room
-    user = userJoinObject(socket.id, username, roomId);
-    //this socket joins this particular room
+      //
+      //
+      //
+      //
 
-    console.log(`line 63`);
-    console.log(user);
-    console.log(user.roomId);
-    console.log(user.id);
-    // console.log(socket.rooms);
-    socket.join(user.roomId);
-    console.log(socket.rooms); //confirms that socket is in the room
+      console.log(`line 47, server roomId: ${roomId}`);
+      //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
+      axios
+        .post("http://localhost:3000/pastedInvite", {
+          username: username,
+          roomId: roomId,
+          roomChange: roomChange,
+        })
+        .then((res) => {
+          console.log(`statusCode: ${res.status}`);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
 
-    //send user socket.id info to client (to disconnect from a socket when changing rooms)
-    socket.emit("userSocketId", user);
-    //!these messages seem to not be emitting after a room change
-    socket.emit(
-      "message",
-      formatMessage(
-        chatBot,
-        `Hi ${user.username}, welcome! You've entered a chat with ${contactName}`
-      ),
-      user.roomID,
-      roomChange
-    );
+      // makes user object (w/id, username, room), and joins the selected room
+      user = userJoinObject(socket.id, username, roomId);
+      //this socket joins this particular room
 
-    //broadcasting (sends message to all in room except the user connecting) when a user connects
-    socket.broadcast
-      .to(user.roomId)
-      .emit(
+      console.log(`line 63`);
+      console.log(user);
+      console.log(user.roomId);
+      console.log(user.id);
+      // console.log(socket.rooms);
+      socket.join(user.roomId);
+      console.log(socket.rooms); //confirms that socket is in the room
+
+      //send user socket.id info to client (to disconnect from a socket when changing rooms)
+      socket.emit("userSocketId", user);
+      //!these messages seem to not be emitting after a room change
+      socket.emit(
         "message",
-        formatMessage(chatBot, `${user.username} has joined the conversation`)
-      ),
-      user.roomId,
-      roomChange;
-  });
+        formatMessage(
+          chatBot,
+          `Hi ${user.username}, welcome! You've entered a chat with ${contactName}`
+        ),
+        user.roomID,
+        roomChange
+      );
+
+      //broadcasting (sends message to all in room except the user connecting) when a user connects
+      socket.broadcast
+        .to(user.roomId)
+        .emit(
+          "message",
+          formatMessage(chatBot, `${user.username} has joined the conversation`)
+        ),
+        user.roomId,
+        roomChange;
+    }
+  );
 
   //receives chat message, formats it, and sends it to all clients in the same room
   socket.on("chatMessage", (msg, roomId, username, userId) => {

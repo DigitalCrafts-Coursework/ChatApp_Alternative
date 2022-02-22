@@ -121,7 +121,13 @@ contacts.forEach((contact) => {
       currentRoom = roomId;
       roomChange = "false";
       console.log(`room changed to ${roomChange}`);
-      socket.emit("joinRoom", { username, roomId, roomChange, contactName });
+      socket.emit("joinRoom", {
+        username,
+        roomId,
+        roomChange,
+        contactName,
+        userId,
+      });
     } else {
       //!disconnect socket for that room, passing user info to re-connect to new room
 
