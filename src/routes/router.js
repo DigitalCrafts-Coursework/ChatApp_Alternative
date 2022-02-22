@@ -82,29 +82,41 @@ router.get("/", async (req, res) => {
       // console.log(contactInfo);
       //
 
-      //
+      //search database for all messages for the joined room
       console.log(`joined room ${joinedRoom}`);
       //check if user has messages in a particular room
       const messagesFromSpecificRoom = await database.any(
         `SELECT * FROM users NATURAL JOIN messages WHERE room_id = '${joinedRoom}'`
       );
 
-      let messages = [];
-      for (let i = 0; i < messagesFromSpecificRoom.length; i++) {
-        // if (combinedTables[i].id === loggedInUser[0].id) {
-        messages.push(messagesFromSpecificRoom[i].message_content);
-        // }
+      if (messagesFromSpecificRoom) {
+        //can build the array or object I want with these messages here
+        let messagesPromise = [];
+        for (let i = 0; i < messagesFromSpecificRoom.length; i++) {
+          messagesPromise.push({
+            username: messagesFromSpecificRoom[i].username,
+            message: messagesFromSpecificRoom[i].message_content,
+            date: messagesFromSpecificRoom[i].created_at,
+          });
+        }
+
+        let resolvedArray = Promise.resolve(messagesPromise);
+        resolvedArray.then(function (messages) {
+          console.log(messages);
+          console.log("in if line 106");
+          res.render("home", {
+            loggedInUser: loggedInUser,
+            contactInfo: contactInfo,
+            messages: messages,
+          });
+        });
+      } else {
+        console.log("in else line 113");
+        res.render("home", {
+          loggedInUser: loggedInUser,
+          contactInfo: contactInfo,
+        });
       }
-      console.log(`messages array ${messages}`);
-
-      //
-      //
-      //
-
-      res.render("home", {
-        loggedInUser: loggedInUser,
-        contactInfo: contactInfo,
-      });
     } catch (error) {
       console.log(error);
     }

@@ -66,6 +66,11 @@
 
       <div class="center-flexbox box">
         <div class="chat-window">
+          <% messages.forEach(message => { %>
+          <div><%= message.username %></div>
+          <div><%= message.message %></div>
+          <div><%= message.date %></div>
+          <% }) %>
           <!-- populates based on conversation selected -->
         </div>
 
@@ -76,7 +81,6 @@
       </div>
       <div class="right-flexbox">
         <div class="contact-info box">
-          <!-- these will be dirrent things, including maybe the actual user ID#, for JS to grab -->
           <div class="contact-details">
             <div class="contact-image-container">
               <img src="<%= %> " alt="" class="" />
