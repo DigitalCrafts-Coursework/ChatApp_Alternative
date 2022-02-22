@@ -104,12 +104,12 @@ io.on("connection", (socket) => {
 
     //broadcasting (sends message to all in room except the user connecting) when a user connects
     socket.broadcast
-      .to(user.roomID)
+      .to(user.roomId)
       .emit(
         "message",
         formatMessage(chatBot, `${user.username} has joined the conversation`)
       ),
-      user.roomID,
+      user.roomId,
       roomChange;
   });
 
