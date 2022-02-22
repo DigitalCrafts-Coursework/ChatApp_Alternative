@@ -43,6 +43,7 @@ const chatBot = "Chatbot";
 //setup socket connection
 io.on("connection", (socket) => {
   console.log(`connected (server-side) with socketId ${socket.id}`);
+
   //get invite code when clicked (also sets up a new room)
   socket.on("get-invite-code", (userId) => {
     const inviteCode = uuidV4();
@@ -61,9 +62,9 @@ io.on("connection", (socket) => {
       });
   });
 
+  //stores current roomId in the router js file
   socket.on("storeRoom", ({ userId, pastedRoomId }) => {
     console.log(`line 47, server roomId: ${pastedRoomId}`);
-    //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
     axios
       .post("http://localhost:3000/pastedInvite", {
         userId: userId,
@@ -78,16 +79,12 @@ io.on("connection", (socket) => {
       });
   });
 
-  //user object variable
+  //join room event (called when contacts clicked, or url is pasted)
   let user = {};
-
-  //join room (gets triggered when url is pasted)
   socket.on(
     "joinRoom",
     ({ username, roomId, roomChange, contactName, userId }) => {
-      console.log(`after joingin room, userid: ${userId}`);
-      console.log(`line 47, server roomId: ${roomId}`);
-      //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
+      //updates database with pasted RoomID (i believe nothing happens here if no id is pasted, i.e. a contact is clicked on)
       axios
         .post("http://localhost:3000/pastedInvite", {
           username: username,
@@ -102,19 +99,12 @@ io.on("connection", (socket) => {
           console.error(error);
         });
 
-      // makes user object (w/id, username, room), and joins the selected room
+      // makes user object, and joins the selected room
       user = userJoinObject(socket.id, username, roomId);
-      //this socket joins this particular room
-
-      console.log(`line 63`);
-      console.log(user);
-      console.log(user.roomId);
-      console.log(user.id);
-      // console.log(socket.rooms);
       socket.join(user.roomId);
       console.log(socket.rooms); //confirms that socket is in the room
 
-      //send joinedRoom Id to the router (so that past chats in that code can be called from the db and rendered)
+      //send joinedRoom Id to the router (so db can be queried from router.js file)
       axios
         .post("http://localhost:3000/logRoomId", {
           roomId: roomId,
@@ -126,49 +116,12 @@ io.on("connection", (socket) => {
         .catch((error) => {
           console.error(error);
         });
-      //
-      //
-      // let messageHistory;
-      // //check whether there is message history
-      // const getMessageHistory = async (userId, roomId) => {
-      //   console.log(`getHistory ${userId}`); // 1
-      //   console.log(`getHistory ${roomId}`); // 123456789
-      //   try {
-      //     const checkMsgHistory = await database.any(
-      //       `SELECT * FROM messages WHERE id = '${userId}' AND room_id = '${roomId}'`
-      //     );
-      //     console.log(`messageHistory: ${JSON.stringify(checkMsgHistory)}`);
-      //     messageHistory = checkMsgHistory;
-      //     console.log(`messageHistory ${messageHistory}`); // [object Object],[object Object]
-      //     if (messageHistory) {
-      //       console.log("message history found");
-      //     } else {
-      //       console.log("no messaging history found");
-      //     }
-      //   } catch (error) {
-      //     console.log(`no messaging history found, ${error}`);
-      //   }
-      // };
-
-      // getMessageHistory(userId, roomId);
-      // if (checkMsgHistory) {
-      //   //db call to
-      //   const messageHistory = database.any(
-      //     `SELECT * FROM messages WHERE room_id = '${roomId}'`
-      //   );
-      //   console.log(`messageHistory: ${messageHistory}`);
-      // renderMessageHistory();
-      // return redirect('/fortest2')->with('data', 'some data');
-
-      //
-      //
-      //
 
       //!if variable saying there are messages (don't do this), else {do this}
 
       //send user socket.id info to client (to disconnect from a socket when changing rooms)
-      socket.emit("userSocketId", user);
-      //!these messages should not emit after the first time change
+      // socket.emit("userSocketId", user);
+      // //!these messages should not emit after the first time change
       socket.emit(
         "message",
         formatMessage(
@@ -193,11 +146,6 @@ io.on("connection", (socket) => {
 
   //receives chat message, formats it, and sends it to all clients in the same room
   socket.on("chatMessage", (msg, roomId, username, userId) => {
-    console.log("line 138");
-    console.log(msg);
-    console.log(roomId);
-    console.log(username);
-    console.log(userId);
     axios
       .post("http://localhost:3000/storeMessage", {
         id: userId,

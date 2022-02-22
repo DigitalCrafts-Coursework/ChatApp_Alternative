@@ -1,7 +1,10 @@
 let socket = io();
+let currentRoom = "";
+let roomChange = "";
+let userSocketId = "";
+let userInfoForReset = "";
 
 const chatBubbleFlex = document.querySelector(".chat-bubble-flex");
-
 chatBubbleFlex.addEventListener("click", (e) => {
   const codeSubmitDropdown = document.querySelector(".code-submit-dropdown");
   codeSubmitDropdown.setAttribute("id", "visible");
@@ -21,11 +24,6 @@ inviteButton.addEventListener("click", () => {
   console.log(userId);
   socket.emit("get-invite-code", userId);
 });
-
-let currentRoom = "";
-let roomChange = "";
-let userSocketId = "";
-let userInfoForReset = "";
 
 //input box for pasting a roomID shared with you
 const pastedCodeButton = document.querySelector(".pasted-code-button");
@@ -100,12 +98,14 @@ socket.on("userSocketId", (user) => {
   userInfoForReset = user;
 });
 
-//renders name and email for for selected contact
-const renderContactInfo = (contactName, contactEmail) => {
+//renders name and email for selected contact
+const renderContactInfo = (contactName, contactEmail, contactSrc) => {
   const contactNameInfo = document.querySelector(".contact-name");
   const contactEmailInfo = document.querySelector(".contact-email");
+  const contactImageSrc = document.querySelector(".contact-image");
   contactNameInfo.textContent = contactName;
   contactEmailInfo.textContent = contactEmail;
+  contactImageSrc.textContent = contactSrc;
 };
 
 //event listener for chat groups sidebar, joins specific room on button click (also sets current room to determine what is shown in the DOM)
@@ -115,12 +115,13 @@ contacts.forEach((contact) => {
     const roomId = event.target.id;
     const contactName = event.target.innerHTML;
     const contactEmail = event.target.classList[1];
-    renderContactInfo(contactName, contactEmail);
+    const contactSrc = event.target.classList[2];
+    renderContactInfo(contactName, contactEmail, contactSrc);
     //sets the clicked room (chatroom) to the current room (records whether there was a room change)
     if (roomId === currentRoom) {
       currentRoom = roomId;
       roomChange = "false";
-      console.log(`room changed to ${roomChange}`);
+      // console.log(`room changed to ${roomChange}`);
       socket.emit("joinRoom", {
         username,
         roomId,
@@ -129,13 +130,10 @@ contacts.forEach((contact) => {
         userId,
       });
     } else {
-      //!disconnect socket for that room, passing user info to re-connect to new room
-
-      // socket.emit("disconnectSocket", userInfoForReset);
       if (currentRoom == "") {
         currentRoom = roomId;
         roomChange = "true";
-        console.log(`room changed to ${roomChange}`);
+        // console.log(`room changed to ${roomChange}`);
         socket.emit("joinRoom", {
           username,
           roomId,
@@ -146,20 +144,9 @@ contacts.forEach((contact) => {
       } else {
         currentRoom = roomId;
         roomChange = "true";
-        console.log(
-          `selected a new room section, client line 131 ${userInfoForReset.id}`
-        );
         //disconnects the user (socket) after clicking a new contact to chat with (passes user info, specifically the socket id)
         socket.emit("disconnectSocket", userInfoForReset);
-        // socket.on("disconnect", function () {
-        //   console.log("disconnected from socket client side!!!!");
-        // });
-        // //reconnect to the server (set up a new socket), and report re-connection
-        // socket = io("http://localhost:3000/");
-        // socket.on("connect", () => {
-        //   console.log("socket reconnected");
-        // });
-        console.log(`username ${username}, roomID ${roomId}, ${roomChange}`);
+        // console.log(`username ${username}, roomID ${roomId}, ${roomChange}`);
         socket.emit("joinRoom", {
           username,
           roomId,

@@ -8,5 +8,6 @@ characterImages.forEach((character) => {
     console.log("clicked");
     smallCharacterImage.innerHTML = `<img class="image4" src="${selectedCharacter}" alt="">`;
     hiddenInput.src = selectedCharacter;
+    hiddenInput.value = selectedCharacter;
   });
 });

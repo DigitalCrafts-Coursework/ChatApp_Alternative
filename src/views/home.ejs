@@ -31,7 +31,7 @@
           <div class="user-details">
             <div class="name">
               <div class="user-image-container">
-                <img src="./images/1.jpg" alt="" class="" />
+                <img src="<%= loggedInUser[0].src %>" alt="" class="" />
               </div>
               <div class="user-name-flex">
                 <img class="user-icon" src="./images/person_icon.png" alt="" />
@@ -52,7 +52,7 @@
           <!-- unique to user -->
           <% contactInfo.forEach(contact => { %>
           <div
-            class="hidden-roomId <%= contact.email %>"
+            class="hidden-roomId <%= contact.email %> <%= contact.src %>"
             id=" <%= contact.room_id %> "
           >
             <%= contact.username %>
@@ -85,7 +85,7 @@
         <div class="contact-info box">
           <div class="contact-details">
             <div class="contact-image-container">
-              <img src="<%= %> " alt="" class="" />
+              <img src="" alt="" class="contact-image" />
             </div>
             <div class="contact-name-flex">
               <img class="user-icon" src="./images/person_icon.png" alt="" />

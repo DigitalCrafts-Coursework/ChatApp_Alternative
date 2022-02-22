@@ -2,19 +2,8 @@ const express = require("express"),
   app = express(),
   router = express.Router(),
   pgPromise = require("pg-promise")();
-//buildUserMessagesObject = require("../../modules/userMessages.js");
 
 const database = require("../../modules/database");
-
-// const config = {
-//   host: "localhost",
-//   port: 5432,
-//   database: "chatApp",
-//   user: "matthewvolny",
-//   password: "Ronweasley1@@@",
-// };
-
-// const database = pgPromise(config);
 
 //joinedRoom
 let joinedRoom = "";
@@ -35,6 +24,7 @@ router.get("/", async (req, res) => {
       res.render("home", {
         loggedInUser: loggedInUser,
         contactInfo: [],
+        messages: [],
       });
     } catch (error) {
       console.log(error);
@@ -206,7 +196,7 @@ router.post("/invite", async (req, res) => {
   try {
     let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
     await database.none(queryString, [userId, inviteCode]);
-    res.redirect("/");
+    // res.redirect("/");
   } catch (error) {
     console.log(error);
   }
@@ -221,7 +211,7 @@ router.post("/pastedInvite", async (req, res) => {
   try {
     let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
     await database.none(queryString, [userId, pastedRoomId]);
-    // res.redirect("/");
+    res.redirect("/");
   } catch (error) {
     console.log(error);
   }
