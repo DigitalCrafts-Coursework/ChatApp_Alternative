@@ -86,10 +86,18 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/storeMessage", async (req, res) => {
+  const id = req.body.id,
+    msg = req.body.msg,
+    post_date = req.body.post_date;
+  console.log(`id: ${id}`);
+  console.log(`msg: ${msg}`);
+  console.log(`post_date: ${post_date}`);
   try {
-    res.redirect("/");
-    //location where we can post to database
+    let queryString =
+      "INSERT INTO messages (id, message_content, post_date) VALUES ($1, $2, $3)";
+    await database.none(queryString, [id, msg, post_date]);
+    //could redirect to another page for a moment (confirming registration, then redirect to /login)
   } catch (error) {
     console.log(error);
   }
@@ -105,9 +113,17 @@ router.get("/login", async (req, res) => {
 });
 
 router.get("/signup", async (req, res) => {
+  const username = req.body.username,
+    password = req.body.password,
+    email = req.body.email,
+    src = req.body.src;
+  console.log(src); //coming up null
   try {
-    //!db call stored as a variable then sent out to render page
-    res.render("signup");
+    let queryString =
+      "INSERT INTO users (username, user_password, email, src) VALUES ($1, $2, $3, $4)";
+    await database.none(queryString, [username, password, email, src]);
+    //could redirect to another page for a moment (confirming registration, then redirect to /login)
+    res.redirect("/login");
   } catch (error) {
     console.log(error);
   }

@@ -53,7 +53,7 @@ messageSubmitButton.addEventListener("click", (e) => {
   console.log(`line 60 ${msg}`);
   //send message to the server
   console.log(`this is the current room ${currentRoom}`);
-  socket.emit("chatMessage", msg, currentRoom);
+  socket.emit("chatMessage", msg, currentRoom, username, userId);
   //clear the chat input box, and focus on the box after button click
   messageInput.value = "";
   messageInput.focus();
@@ -73,8 +73,6 @@ socket.on("message", (formattedMessage, roomID) => {
 //outputs message to the chat window
 function outputMessage(message, roomID) {
   const div = document.createElement("div");
-  // const spacer = document.createElement("div");
-  // spacer.classList.add("spacer");
   //assign messages as "own" or "other" (would want way to select additional colors for more than 2 people in chatroom)
   if (message.username === username) {
     div.classList.add("own-message");
@@ -89,10 +87,8 @@ function outputMessage(message, roomID) {
   //overwrites the chat window contents when a new room (chatroom) is entered
   if (roomChange === "false") {
     document.querySelector(".chat-window").appendChild(div);
-    // document.querySelector(".chat-window").appendChild(spacer);
   } else {
     document.querySelector(".chat-window").replaceChildren(div);
-    // document.querySelector(".chat-window").appendChild(spacer);
     roomChange = "false";
     console.log(`room change: ${roomChange}`);
   }

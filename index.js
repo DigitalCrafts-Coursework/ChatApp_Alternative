@@ -17,6 +17,26 @@ const router = require("./src/routes/router");
 const fetch = require("node-fetch");
 const axios = require("axios");
 
+const routes = require("./src/routes/router");
+const bodyParser = require("body-parser");
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(bodyParser.json());
+
+app.use(express.static("./public/"));
+app.use("/css", express.static(__dirname + "/views/css"));
+app.use("/js", express.static(__dirname + "/views/js"));
+app.use("/images", express.static(__dirname + "/views/images"));
+
+app.set("view engine", "ejs");
+app.set("views", "./src/views/");
+
+app.use("/", router);
+
+server.listen(port, () => {
+  console.log(`listening at port ${port}`);
+});
+
 const chatBot = "Chatbot";
 
 //setup socket connection
@@ -114,19 +134,35 @@ io.on("connection", (socket) => {
   });
 
   //receives chat message, formats it, and sends it to all clients in the same room
-  socket.on("chatMessage", (msg, currentRoom) => {
+  socket.on("chatMessage", (msg, roomId, username, userId) => {
+    console.log("line 138");
     console.log(msg);
+    console.log(roomId);
+    console.log(username);
+    console.log(userId);
+    axios
+      .post("http://localhost:3000/storeMessage", {
+        id: userId,
+        msg: msg,
+        room_Id: roomId,
+        username: username,
+        post_date: "2004-10-19",
+      })
+      .then((res) => {
+        console.log(`statusCode: ${res.status}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     //!post request - save chat to database
-    console.log(`line 92 chat to room id: ${currentRoom}`); //undefined currently (need to get selected roomID in here)
-    console.log(`line 92 chat to room using username: ${user.username}`);
+    console.log(`line 92 chat to room id: ${roomId}`); //undefined currently (need to get selected roomID in here)
+    console.log(`line 92 chat to room using username: ${username}`);
     // io.sockets
     //   .to(currentRoom)
     //   .emit("message", formatMessage(user.username, msg), currentRoom);
-    io.to(currentRoom).emit(
-      "message",
-      formatMessage(user.username, msg),
-      currentRoom
-    );
+    io.to(roomId).emit("message", formatMessage(username, msg), roomId);
     console.log(msg);
   });
 
@@ -155,23 +191,3 @@ io.on("connection", (socket) => {
 
 //   // else the socket will automatically try to reconnect
 // });
-
-const routes = require("./src/routes/router");
-const bodyParser = require("body-parser");
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(bodyParser.json());
-
-app.use(express.static("./public/"));
-app.use("/css", express.static(__dirname + "/views/css"));
-app.use("/js", express.static(__dirname + "/views/js"));
-app.use("/images", express.static(__dirname + "/views/images"));
-
-app.set("view engine", "ejs");
-app.set("views", "./src/views/");
-
-app.use("/", router);
-
-server.listen(port, () => {
-  console.log(`listening at port ${port}`);
-});

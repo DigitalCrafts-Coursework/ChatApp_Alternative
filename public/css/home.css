@@ -204,7 +204,6 @@ body {
   flex-direction: column;
   width: 50%;
   margin-top: 0;
-  border: 1px solid green;
 }
 
 .chat-window {
@@ -218,10 +217,6 @@ body {
   margin-top: 0.8em;
   display: inline-block;
 }
-
-/* .spacer {
-  border: 1px solid red;
-} */
 
 .own-message {
   background-color: #c3cee6;
