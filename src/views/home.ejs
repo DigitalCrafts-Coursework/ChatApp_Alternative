@@ -88,9 +88,9 @@
         <div class="active-chats">
           <div>Contacts</div>
           <!-- unique to user -->
-          <% contacts.forEach(contact => { %>
-          <div class="hidden-roomId" id=" <%= contact[0].room_id %> ">
-            <%= contact[0].id %>
+          <% contactInfo.forEach(contact => { %>
+          <div class="hidden-roomId" id=" <%= contact.room_id %> ">
+            <%= contact.username %>
           </div>
           <%}) %>
         </div>
