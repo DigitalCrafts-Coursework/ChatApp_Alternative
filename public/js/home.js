@@ -105,7 +105,7 @@ const renderContactInfo = (contactName, contactEmail, contactSrc) => {
   const contactImageSrc = document.querySelector(".contact-image");
   contactNameInfo.textContent = contactName;
   contactEmailInfo.textContent = contactEmail;
-  contactImageSrc.textContent = contactSrc;
+  contactImageSrc.src = contactSrc;
 };
 
 //event listener for chat groups sidebar, joins specific room on button click (also sets current room to determine what is shown in the DOM)
@@ -116,6 +116,7 @@ contacts.forEach((contact) => {
     const contactName = event.target.innerHTML;
     const contactEmail = event.target.classList[1];
     const contactSrc = event.target.classList[2];
+    console.log(contactSrc);
     renderContactInfo(contactName, contactEmail, contactSrc);
     //sets the clicked room (chatroom) to the current room (records whether there was a room change)
     if (roomId === currentRoom) {
