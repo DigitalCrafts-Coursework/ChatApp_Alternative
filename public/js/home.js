@@ -128,7 +128,7 @@ contacts.forEach((contact) => {
         currentRoom = roomId;
         roomChange = "true";
         console.log(
-          `selected a new room section, client line 106 ${userInfoForReset.id}`
+          `selected a new room section, client line 131 ${userInfoForReset.id}`
         );
         //disconnects the user (socket) after clicking a new contact to chat with (passes user info, specifically the socket id)
         socket.emit("disconnectSocket", userInfoForReset);

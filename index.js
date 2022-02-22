@@ -135,7 +135,7 @@ io.on("connection", (socket) => {
     // console.log("before disconnect");
     // socket.disconnect(userInfoForReset.id);
     // console.log("after disconnect");
-    socket.leave(user.roomID);
+    socket.leave(user.roomId);
   });
 
   //notification (server-side) that user has been disconnected
