@@ -163,11 +163,12 @@ io.on("connection", (socket) => {
       //
       //
       //
-      //
+
+      //!if variable saying there are messages (don't do this), else {do this}
 
       //send user socket.id info to client (to disconnect from a socket when changing rooms)
       socket.emit("userSocketId", user);
-      //!these messages seem to not be emitting after a room change
+      //!these messages should not emit after the first time change
       socket.emit(
         "message",
         formatMessage(

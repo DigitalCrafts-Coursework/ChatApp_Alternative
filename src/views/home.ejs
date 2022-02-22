@@ -59,17 +59,19 @@
           </div>
           <%}) %>
         </div>
-        <!-- <div class="logo-image box">
-          <div>Worm-chat</div>
-        </div> -->
+        <div class="logo-image box"></div>
       </div>
 
       <div class="center-flexbox box">
         <div class="chat-window">
           <% messages.forEach(message => { %>
-          <div><%= message.username %></div>
-          <div><%= message.message %></div>
-          <div><%= message.date %></div>
+          <div class="message">
+            <p class="message-username">
+              <%= message.username %><button id="close"></button>
+            </p>
+            <p class="message-text"><%= message.message %></p>
+            <p class="message-time"><%= message.date %></p>
+          </div>
           <% }) %>
           <!-- populates based on conversation selected -->
         </div>

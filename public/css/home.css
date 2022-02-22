@@ -211,6 +211,10 @@ body {
   flex: 1;
 }
 
+.past-message {
+  border: 1px red;
+}
+
 .message {
   border-radius: 0.5em;
   padding: 1em;
