@@ -213,15 +213,21 @@ body {
   display: inline-block;
 }
 
+/* .spacer {
+  border: 1px solid red;
+} */
+
 .own-message {
   background-color: #c3cee6;
   max-width: 75%;
   float: right;
+  margin-left: 75%;
 }
 
 .other-message {
   background-color: rgb(237, 177, 177);
   max-width: 75%;
+  margin-right: 75%;
 }
 
 .message-username {
