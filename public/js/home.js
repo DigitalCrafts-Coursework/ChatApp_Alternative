@@ -136,7 +136,13 @@ contacts.forEach((contact) => {
         currentRoom = roomId;
         roomChange = "true";
         console.log(`room changed to ${roomChange}`);
-        socket.emit("joinRoom", { username, roomId, roomChange, contactName });
+        socket.emit("joinRoom", {
+          username,
+          roomId,
+          roomChange,
+          contactName,
+          userId,
+        });
       } else {
         currentRoom = roomId;
         roomChange = "true";
@@ -154,7 +160,13 @@ contacts.forEach((contact) => {
         //   console.log("socket reconnected");
         // });
         console.log(`username ${username}, roomID ${roomId}, ${roomChange}`);
-        socket.emit("joinRoom", { username, roomId, roomChange });
+        socket.emit("joinRoom", {
+          username,
+          roomId,
+          roomChange,
+          contactName,
+          userId,
+        });
       }
     }
   });

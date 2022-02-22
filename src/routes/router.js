@@ -4,20 +4,25 @@ const express = require("express"),
   pgPromise = require("pg-promise")();
 //buildUserMessagesObject = require("../../modules/userMessages.js");
 
-const config = {
-  host: "localhost",
-  port: 5432,
-  database: "chatApp",
-  user: "matthewvolny",
-  password: "Ronweasley1@@@",
-};
+const database = require("../../modules/database");
 
-const database = pgPromise(config);
+// const config = {
+//   host: "localhost",
+//   port: 5432,
+//   database: "chatApp",
+//   user: "matthewvolny",
+//   password: "Ronweasley1@@@",
+// };
+
+// const database = pgPromise(config);
+
+//joinedRoom
+let joinedRoom = "";
 
 //render dashboard (homepage) using user specific data
 let loggedInUser = "";
 router.get("/", async (req, res) => {
-  console.log(`line 42, userID: ${loggedInUser[0].username}`);
+  // console.log(`line 42, userID: ${loggedInUser[0].username}`);
 
   const firstVisitCheck = await database.any(
     `SELECT * FROM rooms WHERE id = '${loggedInUser[0].id}'`
@@ -74,7 +79,27 @@ router.get("/", async (req, res) => {
           }
         }
       }
-      console.log(contactInfo);
+      // console.log(contactInfo);
+      //
+
+      //
+      console.log(`joined room ${joinedRoom}`);
+      //check if user has messages in a particular room
+      const messagesFromSpecificRoom = await database.any(
+        `SELECT * FROM users NATURAL JOIN messages WHERE room_id = '${joinedRoom}'`
+      );
+
+      let messages = [];
+      for (let i = 0; i < messagesFromSpecificRoom.length; i++) {
+        // if (combinedTables[i].id === loggedInUser[0].id) {
+        messages.push(messagesFromSpecificRoom[i].message_content);
+        // }
+      }
+      console.log(`messages array ${messages}`);
+
+      //
+      //
+      //
 
       res.render("home", {
         loggedInUser: loggedInUser,
@@ -91,8 +116,8 @@ router.post("/storeMessage", async (req, res) => {
     msg = req.body.msg,
     postDate = req.body.post_date,
     roomId = req.body.room_Id;
-  console.log(`id: ${id}`);
-  console.log(`msg: ${msg}`);
+  // console.log(`id: ${id}`);
+  // console.log(`msg: ${msg}`);
   // console.log(`post_date: ${post_date}`);
   try {
     let queryString =
@@ -130,10 +155,10 @@ router.post("/login", async (req, res) => {
       `SELECT * FROM users WHERE username = '${username}' AND user_password = '${password}'`
     );
     if (loginAttempt) {
-      console.log(loginAttempt[0].id);
-      console.log(loginAttempt[0].username);
-      console.log(loginAttempt[0].user_password);
-      console.log(loginAttempt[0].email);
+      // console.log(loginAttempt[0].id);
+      // console.log(loginAttempt[0].username);
+      // console.log(loginAttempt[0].user_password);
+      // console.log(loginAttempt[0].email);
       loggedInUser = loginAttempt;
       res.redirect("/");
     }
@@ -148,7 +173,7 @@ router.post("/signup", async (req, res) => {
     password = req.body.password,
     email = req.body.email,
     src = req.body.src;
-  console.log(src); //coming up null
+  console.log(`src ${src}`); //coming up null
   try {
     let queryString =
       "INSERT INTO users (username, user_password, email, src) VALUES ($1, $2, $3, $4)";
@@ -164,8 +189,8 @@ router.post("/signup", async (req, res) => {
 router.post("/invite", async (req, res) => {
   const userId = req.body.userId,
     inviteCode = req.body.inviteCode;
-  console.log(`line 130 ${req.body.userId}`);
-  console.log(`line 132 ${req.body.inviteCode}`);
+  // console.log(`line 130 ${req.body.userId}`);
+  // console.log(`line 132 ${req.body.inviteCode}`);
   try {
     let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
     await database.none(queryString, [userId, inviteCode]);
@@ -179,8 +204,8 @@ router.post("/invite", async (req, res) => {
 router.post("/pastedInvite", async (req, res) => {
   const userId = req.body.userId,
     pastedRoomId = req.body.pastedRoomId;
-  console.log(`line 130 ${userId}`);
-  console.log(`line 132 ${pastedRoomId}`);
+  // console.log(`line 130 ${userId}`);
+  // console.log(`line 132 ${pastedRoomId}`);
   try {
     let queryString = "INSERT INTO rooms (id, room_id) VALUES ($1, $2)";
     await database.none(queryString, [userId, pastedRoomId]);
@@ -190,22 +215,11 @@ router.post("/pastedInvite", async (req, res) => {
   }
 });
 
-//
-//
-//
-//
-
-router.post("/checkMessageHistory", async (req, res) => {
-  const username = req.body.username,
-    roomId = req.body.roomId,
-    userId = req.body.userId;
-  try {
-    const messageHistory = await database.any(
-      `SELECT * FROM messages WHERE id = '${userId}'`
-    );
-  } catch (error) {
-    console.log(`no history found, ${error}`);
-  }
+//checks db for username and password and redirects to the home page
+router.post("/logRoomId", (req, res) => {
+  joinedRoom = req.body.roomId;
+  console.log(`req body roomid ${joinedRoom}`);
+  res.redirect("/");
 });
 
 module.exports = router;

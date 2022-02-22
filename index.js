@@ -16,6 +16,7 @@ const userJoinObject = require("./modules/manageUsers");
 const router = require("./src/routes/router");
 const fetch = require("node-fetch");
 const axios = require("axios");
+const database = require("./modules/database");
 
 const routes = require("./src/routes/router");
 const bodyParser = require("body-parser");
@@ -79,32 +80,12 @@ io.on("connection", (socket) => {
 
   //user object variable
   let user = {};
+
   //join room (gets triggered when url is pasted)
   socket.on(
     "joinRoom",
     ({ username, roomId, roomChange, contactName, userId }) => {
-      //
-      //
-      //check whether there is message history
-      axios
-        .post("http://localhost:3000/checkMessageHistory", {
-          username: username,
-          roomId: roomId,
-          userId: userId,
-        })
-        .then((res) => {
-          console.log(`statusCode: ${res.status}`);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-
-      //
-      //
-      //
-      //
-
+      console.log(`after joingin room, userid: ${userId}`);
       console.log(`line 47, server roomId: ${roomId}`);
       //!update database with users RoomID (after inputting invite code), then make a post request to ("/) to redirect to home page and re-render sidebar
       axios
@@ -132,6 +113,57 @@ io.on("connection", (socket) => {
       // console.log(socket.rooms);
       socket.join(user.roomId);
       console.log(socket.rooms); //confirms that socket is in the room
+
+      //send joinedRoom Id to the router (so that past chats in that code can be called from the db and rendered)
+      axios
+        .post("http://localhost:3000/logRoomId", {
+          roomId: roomId,
+        })
+        .then((res) => {
+          console.log(`statusCode: ${res.status}`);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      //
+      //
+      // let messageHistory;
+      // //check whether there is message history
+      // const getMessageHistory = async (userId, roomId) => {
+      //   console.log(`getHistory ${userId}`); // 1
+      //   console.log(`getHistory ${roomId}`); // 123456789
+      //   try {
+      //     const checkMsgHistory = await database.any(
+      //       `SELECT * FROM messages WHERE id = '${userId}' AND room_id = '${roomId}'`
+      //     );
+      //     console.log(`messageHistory: ${JSON.stringify(checkMsgHistory)}`);
+      //     messageHistory = checkMsgHistory;
+      //     console.log(`messageHistory ${messageHistory}`); // [object Object],[object Object]
+      //     if (messageHistory) {
+      //       console.log("message history found");
+      //     } else {
+      //       console.log("no messaging history found");
+      //     }
+      //   } catch (error) {
+      //     console.log(`no messaging history found, ${error}`);
+      //   }
+      // };
+
+      // getMessageHistory(userId, roomId);
+      // if (checkMsgHistory) {
+      //   //db call to
+      //   const messageHistory = database.any(
+      //     `SELECT * FROM messages WHERE room_id = '${roomId}'`
+      //   );
+      //   console.log(`messageHistory: ${messageHistory}`);
+      // renderMessageHistory();
+      // return redirect('/fortest2')->with('data', 'some data');
+
+      //
+      //
+      //
+      //
 
       //send user socket.id info to client (to disconnect from a socket when changing rooms)
       socket.emit("userSocketId", user);
