@@ -132,9 +132,6 @@ io.on("connection", (socket) => {
 
   //disconnects the user (socket)
   socket.on("disconnectSocket", function (userInfoForReset) {
-    // console.log("before disconnect");
-    // socket.disconnect(userInfoForReset.id);
-    // console.log("after disconnect");
     socket.leave(user.roomId);
   });
 
@@ -143,15 +140,6 @@ io.on("connection", (socket) => {
     console.log("socket disconnected - confirmed server side");
   });
 
-  // io.sockets.sockets.forEach((socket) => {
-  //   // If given socket id is exist in list of all sockets, kill it
-  //   if (userInfoForReset.id);
-  //   socket.disconnect(true);
-  // });
-  // io.sockets.connected[userInfoForReset.id].disconnect();
-  //io.sockets.sockets[].disconnect();
-
-  // //removes user from the users array
   // // userLeave(socket.id);
   // //10a
   // io.to(user.room).emit(
@@ -170,12 +158,9 @@ io.on("connection", (socket) => {
 
 const routes = require("./src/routes/router");
 const bodyParser = require("body-parser");
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
-app.use(bodyParser.json());
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(bodyParser.json());
 
 app.use(express.static("./public/"));
 app.use("/css", express.static(__dirname + "/views/css"));

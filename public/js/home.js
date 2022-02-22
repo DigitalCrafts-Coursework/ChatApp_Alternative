@@ -102,13 +102,22 @@ socket.on("userSocketId", (user) => {
   userInfoForReset = user;
 });
 
+//renders name and email for for selected contact
+const renderContactInfo = (contactName, contactEmail) => {
+  const contactNameInfo = document.querySelector(".contact-name");
+  const contactEmailInfo = document.querySelector(".contact-email");
+  contactNameInfo.textContent = contactName;
+  contactEmailInfo.textContent = contactEmail;
+};
+
 //event listener for chat groups sidebar, joins specific room on button click (also sets current room to determine what is shown in the DOM)
 const contacts = document.querySelectorAll(".hidden-roomId");
 contacts.forEach((contact) => {
   contact.addEventListener("click", (event) => {
     const roomId = event.target.id;
     const contactName = event.target.innerHTML;
-    console.log(contactName);
+    const contactEmail = event.target.classList[1];
+    renderContactInfo(contactName, contactEmail);
     //sets the clicked room (chatroom) to the current room (records whether there was a room change)
     if (roomId === currentRoom) {
       currentRoom = roomId;
