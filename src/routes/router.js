@@ -29,6 +29,7 @@ router.get("/", async (req, res) => {
     } catch (error) {
       console.log(error);
     }
+    //else means that you have logged in before and have some contacts,  and messages stored
   } else {
     try {
       const combinedTables = await database.any(
@@ -42,12 +43,16 @@ router.get("/", async (req, res) => {
         }
       }
 
+      console.log(myRooms);
+
       let otherUsersRooms = [];
       for (let i = 0; i < combinedTables.length; i++) {
         if (combinedTables[i].id !== loggedInUser[0].id) {
           otherUsersRooms.push(combinedTables[i].room_id);
         }
       }
+
+      console.log(otherUsersRooms);
 
       let sharedRooms = [];
       for (let i = 0; i < otherUsersRooms.length; i++) {
@@ -57,19 +62,26 @@ router.get("/", async (req, res) => {
           }
         }
       }
+      console.log(sharedRooms);
+      //remove duplicates from shared rooms array
+
+      let sharedRoomsSet = [...new Set(sharedRooms)];
+      newSharedRooms = Array.from(sharedRoomsSet);
+      console.log(newSharedRooms);
 
       let contactInfo = [];
       for (let i = 0; i < combinedTables.length; i++) {
-        for (let j = 0; j < sharedRooms.length; j++) {
+        for (let j = 0; j < newSharedRooms.length; j++) {
           if (
-            combinedTables[i].room_id === sharedRooms[j] &&
+            combinedTables[i].room_id === newSharedRooms[j] &&
             combinedTables[i].id !== loggedInUser[0].id
           ) {
             contactInfo.push(combinedTables[i]);
           }
         }
       }
-      // console.log(contactInfo);
+
+      console.log(contactInfo);
       //
 
       //search database for all messages for the joined room
